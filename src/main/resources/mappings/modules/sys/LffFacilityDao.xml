@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.sys.dao.LffFacilityDao">
+
+    <sql id="lffFacilityColumns">
+		a.serial AS "serial",
+		a.facility_mac AS "facilityMac",
+		a.name AS "name",
+		a.os AS "os",
+		a.pdc_date AS "pdcDate",
+		a.id AS "id",
+		a.mcid AS "mcid",
+		a.facility_s AS "facilityS",
+		a.create_by AS "createBy.id",
+		a.del_flag AS "delFlag",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks"
+	</sql>
+
+    <sql id="lffFacilityJoins">
+    </sql>
+
+    <select id="get" resultType="LffFacility">
+        SELECT
+        <include refid="lffFacilityColumns"/>
+        FROM lff_facility a
+        <include refid="lffFacilityJoins"/>
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="findList" resultType="LffFacility">
+        SELECT
+        <include refid="lffFacilityColumns"/>
+        FROM lff_facility a
+        <include refid="lffFacilityJoins"/>
+        <where>
+            a.del_flag = #{DEL_FLAG_NORMAL}
+            <if test="serial != null and serial != ''">
+                AND a.serial LIKE
+                <if test="dbName == 'oracle'">'%'||#{serial}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{serial}+'%'</if>
+                <if test="dbName == 'mysql'">concat('%',#{serial},'%')</if>
+            </if>
+            <if test="facilityMac != null and facilityMac != ''">
+                AND a.facility_mac = #{facilityMac}
+            </if>
+            <if test="os != null and os != ''">
+                AND a.os = #{os}
+            </if>
+            <if test="(beginDate != null and beginDate != '') and (endDate != null and endDate != '')">
+                AND a.pdc_date BETWEEN #{beginDate} AND #{endDate}
+            </if>
+            <if test="facilityS != null and facilityS != ''">
+                AND a.facility_s = #{facilityS}
+            </if>
+            <if test="mcid != null and mcid != ''">
+                AND a.mcid = #{mcid}
+            </if>
+        </where>
+        <choose>
+            <when test="page !=null and page.orderBy != null and page.orderBy != ''">
+                ORDER BY ${page.orderBy}
+            </when>
+            <otherwise>
+                ORDER BY a.update_date DESC
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="findAllList" resultType="LffFacility">
+        SELECT
+        <include refid="lffFacilityColumns"/>
+        FROM lff_facility a
+        <include refid="lffFacilityJoins"/>
+        <where>
+            a.del_flag = #{DEL_FLAG_NORMAL}
+            <if test="mcid != null">
+                AND a.mcid = #{mcid}
+            </if>
+        </where>
+        <choose>
+            <when test="page !=null and page.orderBy != null and page.orderBy != ''">
+                ORDER BY ${page.orderBy}
+            </when>
+            <otherwise>
+                ORDER BY a.update_date DESC
+            </otherwise>
+        </choose>
+    </select>
+
+    <insert id="insert">
+		INSERT INTO lff_facility(
+			serial,
+			facility_mac,
+			name,
+			os,
+			pdc_date,
+			facility_s
+		) VALUES (
+			#{serial},
+			#{facilityMac},
+			#{name},
+			#{os},
+			#{pdcDate},
+			#{facilityS}
+		)
+	</insert>
+
+    <update id="update">
+        UPDATE lff_facility SET
+        serial = #{serial},
+        facility_mac = #{facilityMac},
+        name = #{name},
+        os = #{os},
+        pdc_date = #{pdcDate},
+        facility_s = #{facilityS}
+        <if test="mcid != null and mcid != ''">
+            ,mcid=#{mcid}
+        </if>
+        WHERE id = #{id}
+    </update>
+
+    <update id="delete">
+		UPDATE lff_facility SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+
+</mapper>

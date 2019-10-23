@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thinkgem.jeesite.modules.lfffc.dao.LffFCDao">
+    
+	<sql id="lffFCColumns">
+		a.id AS "id",
+		a.c_id AS "cId",
+		a.f_id AS "fId"
+	</sql>
+	
+	<sql id="lffFCJoins">
+	</sql>
+    
+	<select id="get" resultType="LffFC">
+		SELECT 
+			<include refid="lffFCColumns"/>
+		FROM lff_f_c a
+		<include refid="lffFCJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="LffFC">
+		SELECT 
+			<include refid="lffFCColumns"/>
+		FROM lff_f_c a
+		<include refid="lffFCJoins"/>
+		<where>
+			
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="LffFC">
+		SELECT 
+			<include refid="lffFCColumns"/>
+		FROM lff_f_c a
+		<include refid="lffFCJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO lff_f_c(
+			id,
+			c_id,
+			f_id
+		) VALUES (
+			#{id},
+			#{cId},
+			#{fId}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE lff_f_c SET 	
+			c_id = #{cId},
+			f_id = #{fId}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM lff_f_c
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
